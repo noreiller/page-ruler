@@ -39,8 +39,8 @@ var pageRuler = {
     div.id = "addon-page-ruler"
     div.innerHTML = html;
     document.body.appendChild(div);
-    div.style.width = document.body.offsetWidth + 'px';
-    div.style.height = document.body.offsetHeight + 'px';
+    div.style.width = document.documentElement.offsetWidth + 'px';
+    div.style.height = document.documentElement.offsetHeight + 'px';
     div.focus();
 
     this._status = true
