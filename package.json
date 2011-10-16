@@ -1,8 +1,8 @@
 {
     "name": "page-ruler",
     "license": "MPL 1.1/GPL 2.0/LGPL 2.1",
-    "author": "",
-    "version": "0.1",
+    "author": "Aurélien MANCA",
+    "version": "0.2",
     "fullName": "Page Ruler",
     "id": "jid1-g0J5YenAv9JWlA",
     "description": "A lightweight ruler"

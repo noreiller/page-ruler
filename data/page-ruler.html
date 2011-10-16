@@ -1,14 +1,33 @@
 <style type="text/css" scoped="scoped">
   #addon-page-ruler {
     background-color: rgba(34, 102, 153, .25);
-    left: 0;
     min-height: 100%;
-    min-width: 100%;
+    left: 0;
     position: absolute;
     top: 0;
+    min-width: 100%;
     z-index: 9999999;
   }
   #addon-page-ruler-area {
+    height: 0;
+    left: 0;
+    overflow: hidden;
+    padding-bottom: 20px;
+    padding-right: 125px;
+    position: absolute;
+    top: 0;
+    width: 0;
+  }
+/*  body  {
+    background-color: #ffa;
+  }
+  body > #addon-page-ruler-area {
+    height: 300px;
+    left: 200px;
+    top: 50px;
+    width: 300px;
+  }*/
+  #addon-page-ruler-inner {
     background-color: rgba(34, 102, 153, .75);
     background-image:
       -moz-linear-gradient(white 1px, transparent 1px),
@@ -20,46 +39,33 @@
     ;
     background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px, 10px 10px, 10px 10px;
     background-position: 0 0, 0 0, 0 0, 0 0;
-    cursor: move;
-    height: 0;
-    left: 0;
-    overflow: hidden;
-    position: absolute;
-/*    resize: both;*/
-    top: 0;
-    width: 0;
-  }
-  body > #addon-page-ruler-area {
-    height: 300px;
-    width: 300px;
+/*    cursor: move;*/
+    height: 100%;
+    width: 100%;
   }
   #addon-page-ruler-legend {
     background-color: white;
-    bottom: 1px;
+    -moz-box-shadow: 0 0 5px rgba(0, 0, 0, .25);
+    box-shadow: 0 0 5px rgba(0, 0, 0, .25);
     color: black;
     cursor: text;
+    display: none;
     font-size: 10px;
-    line-height: 14px;
-    height: 14px;
-    left: 2px;
+    line-height: 15px;
+    min-height: 15px;
+    right: 15px;
+    min-width: 70px;
     padding: 2px 10px 2px 25px;
     position: absolute;
-  }
-  #addon-page-ruler-resize {
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAddJREFUeNpi/P//PwMlgImBQsACYzjOfzUTSBkjSwJdlw6kzqJrunPxIsO/f/8Ynk32QBjw588f41hvKePbD35+UVVg59l2+M2td59/Y9j4/P597C74/fMnw+XrX75IiHDybFhxguEdq9ia379+nf314wfDz+/fGX79+A6kfzAws7BgDwOQAZqq3DxHdp9iMLIyYOBmZwoBeqGA6EAE2bRs/c1bT39xtR04+eCWgaqIGhcrYyYhQ+Du+fvnT/q7D19ATjz7+s2H14dO/si01JdVO3HxUeZPSFRPIBSNZ2EhDrR1wpu376cfOnnrlrGGuBo3qkuMkWMLIx18vX8GFoUTXr35MH3/iZu39HTl1DjYWUCGtHJzsy8Dunbmf2A0ggAjLCUyMjLCDeGUN2TgM49lYBRRZ/j940cBNz9vpratvtqlo5dvBYeYqy2ZtRPkUpO384IZWLD56/vD82DMJqXLwKodMOHHd3XRU/vPhci52qitu/Dmyy9gjBGVlH89u8zw48lF4z9CQiFmka5qN59//KKrL8sDivJvu5sxvADyAzMQs0IxGxCzA71hyGhZ2IBi8tvbN/8d660A6n2MbgDMECYozYLGZ4KqAYFvQL0fGSnNzgABBgBbsuMDQbb6rAAAAABJRU5ErkJggg%3D%3D);
-    bottom: 0;
-    cursor: se-resize;
-    height: 16px;
-    position: absolute;
-    right: 0;
-    width: 16px;
+    top: 5px;
   }
   #addon-page-ruler-close {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAxRJREFUeNpkU1toU0EQnd1NbpvUpo0tijZqrZRiWhQDIlotvupb8EtRfCCCv4Kf/vopiCB++yEKgj+Kr4CKoGmrVutboba16TWSmCY3j5vcuzd319lrBB8Lw+zszjkzsztDzmt++HPZAJuaQqGDwHkUgBAgIAXzjVbKpatnuPMC/lnkN8ErIdpXh8MXF3YujcYGNkbmdyxqllIoDpmamio+fxBPZjPp0Wt549QLIazfBGw7Y/DQFW0DrS3X12zaGtswuKObWnagmvrGrEyGOYbBQqFQcGX/wIKaW2trn82uiVeqtxDregRxV/hPhMOX1vZvWN3T1RXJjI1C/v1bKE6MQzk5CWZyGkxdB7uQh65oX2uV21p39sf8x9x5pAh8exmLtfj9fdHOxZGZZ0PoPA1XsjkI4eWuRg3uWhyKuD/6Iw22kYP1sdiyz0OJQTw6h5Kj3Zp2eEV0+bzUu9dQmJ4A2zThUsmEI/fjcNvmnla2ZRYgN/kF0p8+0KW9fc1HfeyQyoAGG7SuNhBBI6UDd2xwqQR9eAii/evh2L24p/XhBLgEf8g2YVb/Ch2N2hyN0j71CRSkbJBFg1SrJXSSnuOFnYPwIfHUA39EfWHnNiT+9WpmqQCaVWE+xkIeQZpzs1AwKq50oYZg5Xj8Thx6ETxTz0TZiryGQl0HZg2j/J07ZY9gzOYT4/nCbEBFpwRqjHjgJKb9Zv9uSI4kPLuGd4o8SAV8zGQLL4X4jATCNyrEiF61160KBswSlU0Ont5cEv7VJQgYO7AHxur7BlS86s5MCFnRpXyHpmSK5WXN7VlsuWxFs29uhRCfg6UIjChRS+xmtQKoIlKaT/PW5HnbHuEAqplKisDEvnSHhYh0WqK8hIDTGqDNPkqYH0FNGDksgYsyH39i8PGztpMsSriKOK8EbxZOc0flvBmnYt9Jzd/aTUk7gmm7n7K0LVyBT/PGFbnLTi2NfjdQEir6X8OEJE2o1N9uQemZS0hDByFsSggXn7uKZ6rmR/XI1n/TWCdRJbWgRFAWoATrkVIoen0v/xznnwIMAFYYgA0K2T63AAAAAElFTkSuQmCC);
-    bottom: 2px;
+    display: none;
+    top: 7px;
     height: 16px;
-    left: 4px;
-    opacity:  .5;
+    right: 102px;
+    opacity: .5;
     position: absolute;
     width: 16px;
   }
@@ -67,8 +73,19 @@
     cursor: pointer;
     opacity: 1;
   }
+  #addon-page-ruler-resize {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAddJREFUeNpi/P//PwMlgImBQsACYzjOfzUTSBkjSwJdlw6kzqJrunPxIsO/f/8Ynk32QBjw588f41hvKePbD35+UVVg59l2+M2td59/Y9j4/P597C74/fMnw+XrX75IiHDybFhxguEdq9ia379+nf314wfDz+/fGX79+A6kfzAws7BgDwOQAZqq3DxHdp9iMLIyYOBmZwoBeqGA6EAE2bRs/c1bT39xtR04+eCWgaqIGhcrYyYhQ+Du+fvnT/q7D19ATjz7+s2H14dO/si01JdVO3HxUeZPSFRPIBSNZ2EhDrR1wpu376cfOnnrlrGGuBo3qkuMkWMLIx18vX8GFoUTXr35MH3/iZu39HTl1DjYWUCGtHJzsy8Dunbmf2A0ggAjLCUyMjLCDeGUN2TgM49lYBRRZ/j940cBNz9vpratvtqlo5dvBYeYqy2ZtRPkUpO384IZWLD56/vD82DMJqXLwKodMOHHd3XRU/vPhci52qitu/Dmyy9gjBGVlH89u8zw48lF4z9CQiFmka5qN59//KKrL8sDivJvu5sxvADyAzMQs0IxGxCzA71hyGhZ2IBi8tvbN/8d660A6n2MbgDMECYozYLGZ4KqAYFvQL0fGSnNzgABBgBbsuMDQbb6rAAAAABJRU5ErkJggg%3D%3D);
+    bottom: 0;
+    cursor: se-resize;
+    display: none;
+    height: 16px;
+    position: absolute;
+    right: 105px;
+    width: 16px;
+  }
 </style>
 <div id="addon-page-ruler-area">
+  <div id="addon-page-ruler-inner"></div>
   <div id="addon-page-ruler-legend"></div>
   <div id="addon-page-ruler-resize"></div>
   <div id="addon-page-ruler-close"></div>
