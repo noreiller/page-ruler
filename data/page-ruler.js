@@ -8,7 +8,17 @@ var pageRuler = {
   paddingBottom: 20,
 
   init : function() {
-    this.listen();
+    var t = this;
+
+    self.port.on('init', function (message) {
+      if (
+        document && window.location.href == message
+        && !(self.frameElement && (self.frameElement + "").indexOf("HTMLIFrameElement") > -1)
+      ) {
+        self.port.emit('init', 'true');
+        t.listen();
+      }
+    });
   },
 
   call : function (messageType, message) {
@@ -18,30 +28,32 @@ var pageRuler = {
   },
 
   listen : function () {
-    self.port.on('enable', function (message) {
-      if (document.getElementById('addon-page-ruler'))
-        pageRuler.disableRuler();
+    var t = this;
 
-      var pr = pageRuler.enableRuler(message);
+    self.port.on('enable', function (message) {
+      if (document && document.getElementById('addon-page-ruler'))
+        t.disableRuler();
+
+      var pr = t.enableRuler(message);
       if (pr === true)
-        pageRuler.loadEvents();
+        t.loadEvents();
       else {
         self.port.emit('disable', 'Script cancelled.');
-         pageRuler.disableRuler();
+         t.disableRuler();
       }
     });
 
     self.port.on('disable', function () {
-      pageRuler.call('message', 'Disabling the script.');
-      pageRuler.disableRuler();
-      pageRuler.call('message', 'Disabling the script. Done.');
+      t.call('message', 'Disabling the script.');
+      t.disableRuler();
+      t.call('message', 'Disabling the script. Done.');
     });
 
     self.port.on('debugMode', function (debugMode) {
       // This one should'nt be displayed since debugMode is set false by defaut.
-      pageRuler.call('message', 'Setting debug mode on : ' + debugMode + '.');
-      pageRuler._debugMode = debugMode;
-      pageRuler.call('message', 'Setting debug mode on : ' + debugMode + '. Done');
+      t.call('message', 'Setting debug mode on : ' + debugMode + '.');
+      t._debugMode = debugMode;
+      t.call('message', 'Setting debug mode on : ' + debugMode + '. Done');
     });
   },
 
